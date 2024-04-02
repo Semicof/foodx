@@ -47,6 +47,7 @@ public class Review {
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_user", referencedColumnName = "id")
     private User user;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_restaurant", referencedColumnName = "id")
     private Restaurant restaurant;

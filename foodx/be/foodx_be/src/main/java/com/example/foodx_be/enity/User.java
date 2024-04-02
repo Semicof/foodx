@@ -2,10 +2,7 @@ package com.example.foodx_be.enity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.List;
@@ -85,10 +82,16 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "userSent", cascade = CascadeType.ALL)
     private List<Message> sentMessageList;
+
     @JsonIgnore
     @OneToMany(mappedBy = "userRecvie", cascade = CascadeType.ALL)
     private List<Message> reciveMessageList;
+
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Review>   reviewList;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Restaurant> restaurantList;
 }

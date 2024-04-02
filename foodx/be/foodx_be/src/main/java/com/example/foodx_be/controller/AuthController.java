@@ -23,8 +23,8 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/register")
-    private ResponseEntity<HttpResponse> register(@Valid @RequestBody RegisterCommand registerCommand){
-        userService.saveUser(registerCommand);
-        return new ResponseEntity<>( HttpStatus.CREATED);
+    private ResponseEntity<User> register(@Valid @RequestBody RegisterCommand registerCommand){
+        User user = userService.saveUser(registerCommand);
+        return new ResponseEntity<>( user, HttpStatus.CREATED);
     }
 }

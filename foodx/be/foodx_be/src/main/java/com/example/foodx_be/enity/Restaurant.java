@@ -28,25 +28,15 @@ public class Restaurant {
             strategy = "org.hibernate.id.UUIDGenerator"
     )
     private UUID id;
-    @Column(name = "id_user")
-    private UUID userID;
-    @NotBlank
     @Column(name = "restaurant_name")
     private String restaurantName;
-    @NotBlank
     @Column(name = "house_number")
     private String houseNumber;
-    @NotBlank
     private String ward;
-    @NotBlank
     private String district;
-    @NotBlank
     private String city;
-    @NotBlank
     private BigDecimal longitude;
-    @NotBlank
     private BigDecimal latitude;
-    @NotBlank
     private String description;
     @Column(name = "phone_number")
     private String phoneNumber;
@@ -61,10 +51,16 @@ public class Restaurant {
     @Column(name = "update_time")
     private LocalDateTime updateTime;
 
+    @ManyToOne
+    @JoinColumn(name = "id_user", referencedColumnName = "id")
+    private User user;
+
     @JsonIgnore
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
     private List<Review> reviewList;
+
     @JsonIgnore
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
     private List<OpenTime> openTimeList;
+
 }
