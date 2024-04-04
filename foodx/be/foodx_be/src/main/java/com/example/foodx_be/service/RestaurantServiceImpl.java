@@ -7,6 +7,7 @@ import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.User;
 import com.example.foodx_be.exception.NoResultsFoundException;
 import com.example.foodx_be.repository.RestaurantRepository;
+import com.example.foodx_be.ulti.RestaurantState;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -44,10 +45,10 @@ public class RestaurantServiceImpl implements RestaurantService {
         List<Restaurant> restaurantList = new ArrayList<>();
         switch (searchBy){
             case "city":
-                restaurantList = restaurantRepository.findAllByCityContaining(keyword);
+                restaurantList = restaurantRepository.findAllByCityAndRestaurantState(keyword, RestaurantState.PUBLISH);
                 break;
             case "restaurantName":
-                restaurantList = restaurantRepository.findAllByRestaurantNameContaining(keyword);
+                restaurantList = restaurantRepository.findAllByRestaurantNameAndRestaurantState(keyword, RestaurantState.PUBLISH);
                 break;
         }
         if(restaurantList.isEmpty()){
