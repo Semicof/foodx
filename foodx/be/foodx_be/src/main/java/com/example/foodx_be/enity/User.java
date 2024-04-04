@@ -92,6 +92,6 @@ public class User {
     private List<Review>   reviewList;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userAdd", cascade = CascadeType.ALL)
     private List<Restaurant> restaurantList;
 }

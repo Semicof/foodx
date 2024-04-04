@@ -56,4 +56,12 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         ErrorResponse errorResponse = new ErrorResponse(Arrays.asList(ex.getLocalizedMessage()));
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(NoResultsFoundException.class)
+    public ResponseEntity<Object> handleNoResultFound(NoResultsFoundException ex){
+        ErrorResponse errorResponse = new ErrorResponse(Arrays.asList(ex.getLocalizedMessage()));
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+
 }

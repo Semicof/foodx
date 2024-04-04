@@ -1,16 +1,14 @@
 package com.example.foodx_be.enity;
 
-import com.example.foodx_be.ulti.UpdateSate;
+import com.example.foodx_be.ulti.RestaurantState;
+import com.example.foodx_be.ulti.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +18,7 @@ import java.util.UUID;
 @Setter
 @Table
 @Entity
+@Builder
 public class Restaurant {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -46,14 +45,28 @@ public class Restaurant {
     private String facebookLink;
     @Column(name = "instagram_link")
     private String instagramLink;
-    @Column(name = "state")
-    private UpdateSate updateSate;
-    @Column(name = "update_time")
-    private LocalDateTime updateTime;
+    @Column(name = "restaurant_state")
+    private RestaurantState restaurantState;
+    @Column(name = "time_added")
+    private LocalDate timeAdded;
+
+    @PrePersist
+    public void control(){
+        if(restaurantState == null){
+            restaurantState = RestaurantState.PENDING;
+        }
+        if(timeAdded == null){
+            timeAdded = LocalDate.now();
+        }
+    }
 
     @ManyToOne
-    @JoinColumn(name = "id_user", referencedColumnName = "id")
-    private User user;
+    @JoinColumn(name = "id_user_add", referencedColumnName = "id")
+    private User userAdd;
+
+    @ManyToOne
+    @JoinColumn(name = "id_user_owner", referencedColumnName = "id")
+    private User userOwner;
 
     @JsonIgnore
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)

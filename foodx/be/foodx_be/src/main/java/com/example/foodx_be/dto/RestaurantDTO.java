@@ -1,20 +1,19 @@
 package com.example.foodx_be.dto;
 
 import com.example.foodx_be.enity.User;
+import com.example.foodx_be.ulti.RestaurantState;
 import com.example.foodx_be.ulti.UpdateSate;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
+@Data
+@Builder
 public class RestaurantDTO {
+    private UUID id;
     private String restaurantName;
     private String houseNumber;
     private String ward;
@@ -28,5 +27,8 @@ public class RestaurantDTO {
     private String website;
     private String facebookLink;
     private String instagramLink;
-    private User user;
+    private RestaurantState restaurantState;
+    private LocalDate timeAdded;
+    private UserDTO userOwner;
+    private UserDTO userAdd;
 }

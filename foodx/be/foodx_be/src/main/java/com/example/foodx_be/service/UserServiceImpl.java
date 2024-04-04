@@ -1,6 +1,7 @@
 package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.RegisterCommand;
+import com.example.foodx_be.dto.UpdateUserComand;
 import com.example.foodx_be.dto.UserDTO;
 import com.example.foodx_be.enity.User;
 import com.example.foodx_be.exception.UserExistedException;
@@ -68,10 +69,10 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserDTO updateUser(UserDTO userDTO) {
-        Optional<User> optionalUser = userRepository.findById(userDTO.getId());
+    public UserDTO updateUser(UpdateUserComand updateUserComand) {
+        Optional<User> optionalUser = userRepository.findById(updateUserComand.getId());
         User userOld = unwrapUser(optionalUser);
-        User userNew = convertToUser(userDTO);
+        User userNew = convertToUser(updateUserComand);
 
         userOld.setName(userNew.getName());
         userOld.setPhoneNumber(userNew.getPhoneNumber());
@@ -82,9 +83,6 @@ public class UserServiceImpl implements UserService{
         userOld.setWard(userNew.getWard());
         userOld.setDistrict(userNew.getDistrict());
         userOld.setCity(userNew.getCity());
-        userOld.setJointDate(userNew.getJointDate());
-        userOld.setPoints(userNew.getPoints());
-        userOld.setRole(userNew.getRole());
 
         userRepository.save(userOld);
         return convertToDTO(userOld);
@@ -96,7 +94,8 @@ public class UserServiceImpl implements UserService{
         else throw new UserNotFoundException();
     }
 
-    private User convertToUser(RegisterCommand userDTO) {
+    @Override
+    public User convertToUser(RegisterCommand userDTO) {
         return User.builder()
                 .username(userDTO.getUsername())
                 .password(userDTO.getPassword())
@@ -109,7 +108,8 @@ public class UserServiceImpl implements UserService{
                 .build();
     }
 
-    private User convertToUser(UserDTO userDTO) {
+    @Override
+    public User convertToUser(UserDTO userDTO) {
         return User.builder()
                 .name(userDTO.getName())
                 .phoneNumber(userDTO.getPhoneNumber())
@@ -123,7 +123,21 @@ public class UserServiceImpl implements UserService{
                 .build();
     }
 
-    private UserDTO convertToDTO(User user) {
+    public User convertToUser(UpdateUserComand updateUserComand) {
+        return User.builder()
+                .name(updateUserComand.getName())
+                .phoneNumber(updateUserComand.getPhoneNumber())
+                .email(updateUserComand.getEmail())
+                .avatarLink(updateUserComand.getAvatarLink())
+                .facebookLink(updateUserComand.getFacebookLink())
+                .instagramLink(updateUserComand.getInstagramLink())
+                .ward(updateUserComand.getWard())
+                .district(updateUserComand.getDistrict())
+                .city(updateUserComand.getCity())
+                .build();
+    }
+    @Override
+    public UserDTO convertToDTO(User user) {
         return UserDTO.builder()
                 .id(user.getId())
                 .name(user.getName())

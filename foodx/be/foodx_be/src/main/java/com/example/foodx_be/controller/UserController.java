@@ -1,5 +1,6 @@
 package com.example.foodx_be.controller;
 
+import com.example.foodx_be.dto.UpdateUserComand;
 import com.example.foodx_be.dto.UserDTO;
 import com.example.foodx_be.service.UserService;
 import lombok.AllArgsConstructor;
@@ -22,13 +23,15 @@ public class UserController {
     }
 
     @PostMapping("/profile/update")
-    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO){
-        return new ResponseEntity<>(userService.updateUser(userDTO), HttpStatus.OK);
+    public ResponseEntity<UserDTO> updateUser(@RequestBody UpdateUserComand updateUserComand) {
+        return new ResponseEntity<>(userService.updateUser(updateUserComand), HttpStatus.OK);
     }
 
 
     @GetMapping("/search")
-    public ResponseEntity<Page<UserDTO>> findUsersByName(@RequestParam(name = "name") String name, @RequestParam(name = "pageNo", defaultValue = "0") int pageNo, @RequestParam(name = "limit", defaultValue = "5") int limit){
+    public ResponseEntity<Page<UserDTO>> findUsersByName(@RequestParam(name = "name") String name,
+                                                         @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
+                                                         @RequestParam(name = "limit", defaultValue = "5") int limit) {
         return new ResponseEntity<>(userService.getUsersByName(pageNo, limit, name), HttpStatus.OK);
     }
 }

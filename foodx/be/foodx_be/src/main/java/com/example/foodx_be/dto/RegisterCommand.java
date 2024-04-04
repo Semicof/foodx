@@ -14,23 +14,20 @@ import lombok.*;
 @PasswordMatches
 public class RegisterCommand {
     @ValidUsername
-    @NonNull
+    @NotBlank
     private String username;
 
     @NotBlank(message =  "Password cannot be empty")
-    @NonNull
     private String password;
 
     @NotBlank(message =  "Repeat Password cannot be empty")
-    @NonNull
     private String repeatPassword;
 
     @ValidName
-    @NonNull
+    @NotBlank(message = "Name cannot be empty")
     private String name;
 
     @NotBlank(message =  "Phone cannot be empty")
-    @NonNull
     private String phoneNumber;
 
     @Email(message = "Email is not valid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
@@ -38,14 +35,11 @@ public class RegisterCommand {
     private String email;
 
     @NotBlank(message =  "Ward cannot be empty")
-    @NonNull
     private String ward;
 
-    @NotBlank(message =  "District cannot be empty")
-    @NonNull
+    @NotBlank(message =  "Ward cannot be empty")
     private String district;
 
-    @NotBlank(message =  "City cannot be empty")
-    @NonNull
+    @NotBlank(message =  "Ward cannot be empty")
     private String city;
 }
