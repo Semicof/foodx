@@ -1,8 +1,9 @@
 package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.AddRestaurantCommand;
+import com.example.foodx_be.dto.OpenTimeDTO;
 import com.example.foodx_be.dto.RestaurantDTO;
-import com.example.foodx_be.dto.UserDTO;
+import com.example.foodx_be.enity.OpenTime;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.User;
 import com.example.foodx_be.exception.NoResultsFoundException;
@@ -24,7 +25,6 @@ import java.util.Optional;
 public class RestaurantServiceImpl implements RestaurantService {
     private UserService userService;
     private RestaurantRepository restaurantRepository;
-
     @Override
     public void addRestaurant(AddRestaurantCommand addRestaurantCommand) {
         User user = userService.getUser(addRestaurantCommand.getUserName());
@@ -34,7 +34,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public RestaurantDTO getRestaurant(String restaurantName) {
+    public RestaurantDTO getRestaurantDTO(String restaurantName) {
         Optional<Restaurant> restaurantOptional = restaurantRepository.findRestaurantByRestaurantName(restaurantName);
         Restaurant restaurant = unwrarpRestaurant(restaurantOptional);
         return convertToRestaurantDTO(restaurant);
@@ -43,7 +43,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public Page<RestaurantDTO> getRestaurantsByKeyword(int pageNo, int limit, String keyword, String searchBy) {
         List<Restaurant> restaurantList = new ArrayList<>();
-        switch (searchBy){
+        switch (searchBy) {
             case "city":
                 restaurantList = restaurantRepository.findAllByCityAndRestaurantState(keyword, RestaurantState.PUBLISH);
                 break;
@@ -51,8 +51,8 @@ public class RestaurantServiceImpl implements RestaurantService {
                 restaurantList = restaurantRepository.findAllByRestaurantNameAndRestaurantState(keyword, RestaurantState.PUBLISH);
                 break;
         }
-        if(restaurantList.isEmpty()){
-            throw  new NoResultsFoundException();
+        if (restaurantList.isEmpty()) {
+            throw new NoResultsFoundException();
         }
         List<RestaurantDTO> userDTOList = new ArrayList<>();
         for (Restaurant restaurant : restaurantList) {
@@ -61,9 +61,16 @@ public class RestaurantServiceImpl implements RestaurantService {
         Pageable pageable = PageRequest.of(pageNo, limit);
 
         int startIndex = (int) pageable.getOffset();
-        int endIndex = (int)Math.min(pageable.getOffset() + pageable.getPageSize(), userDTOList.size());
+        int endIndex = (int) Math.min(pageable.getOffset() + pageable.getPageSize(), userDTOList.size());
         List<RestaurantDTO> subList = userDTOList.subList(startIndex, endIndex);
         return new PageImpl<>(subList, pageable, userDTOList.size());
+    }
+
+    @Override
+    public Restaurant getRestaurantEnity(String restaurantName) {
+        Optional<Restaurant> restaurantOptional = restaurantRepository.findRestaurantByRestaurantName(restaurantName);
+        Restaurant restaurant = unwrarpRestaurant(restaurantOptional);
+        return  restaurant;
     }
 
     static Restaurant unwrarpRestaurant(Optional<Restaurant> entity) {
@@ -111,6 +118,35 @@ public class RestaurantServiceImpl implements RestaurantService {
         if (restaurant.getUserOwner() != null) {
             builder.userOwner(userService.convertToDTO(restaurant.getUserOwner()));
         }
+        if(!restaurant.getOpenTimeList().isEmpty()){
+            builder.openTimeDTOList(convertToOpenTimeDTOList(restaurant.getOpenTimeList()));
+        }
         return builder.build();
     }
+
+    private List<OpenTimeDTO> convertToOpenTimeDTOList(List<OpenTime> openTimeList){
+        List<OpenTimeDTO> openTimeDTOList = new ArrayList<>();
+        for(OpenTime openTime : openTimeList){
+            openTimeDTOList.add(convertToOpenTimeDTO(openTime));
+        }
+        return openTimeDTOList;
+    }
+
+    public OpenTimeDTO convertToOpenTimeDTO(OpenTime openTime) {
+        return OpenTimeDTO.builder()
+                .openingTime(openTime.getOpeningTime())
+                .closingTime(openTime.getClosingTime())
+                .dayOfWeek(openTime.getDayOfWeek())
+                .build();
+    }
+
+    public void addOpenTimeToRestaurant(String restaurantName, List<OpenTime> openTimeList) {
+        Restaurant restaurant = getRestaurantEnity(restaurantName);
+        restaurant.setOpenTimeList(openTimeList);
+        for(OpenTime openTime : openTimeList){
+            openTime.setRestaurant(restaurant);
+        }
+        restaurantRepository.save(restaurant);
+    }
+
 }

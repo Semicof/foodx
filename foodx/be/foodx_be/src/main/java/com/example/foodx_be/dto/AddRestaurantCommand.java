@@ -1,11 +1,13 @@
 package com.example.foodx_be.dto;
 
+import com.example.foodx_be.enity.OpenTime;
 import com.example.foodx_be.enity.User;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Data
