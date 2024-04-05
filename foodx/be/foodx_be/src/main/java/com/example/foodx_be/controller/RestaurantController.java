@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
@@ -24,15 +25,10 @@ public class RestaurantController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PostMapping("/{restaurantName}/update/opentime")
-    public ResponseEntity<List<HttpStatus>> addOpenTime(@PathVariable String restaurantName, @RequestBody List<OpenTime> openTimeList){
-        restaurantService.addOpenTimeToRestaurant(restaurantName, openTimeList);
-        return  new ResponseEntity<>(HttpStatus.OK);
-    }
 
-    @GetMapping("/{restaurantName}")
-    public ResponseEntity<RestaurantDTO> getRestaurant(@PathVariable String restaurantName){
-        return new ResponseEntity<>(restaurantService.getRestaurantDTO(restaurantName), HttpStatus.OK);
+    @GetMapping("/{idRestaurant}")
+    public ResponseEntity<RestaurantDTO> getRestaurant(@PathVariable UUID idRestaurant){
+        return new ResponseEntity<>(restaurantService.getRestaurantDTO(idRestaurant), HttpStatus.OK);
     }
 
     @GetMapping("/search")

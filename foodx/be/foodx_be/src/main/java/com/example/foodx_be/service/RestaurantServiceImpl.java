@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -34,8 +35,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public RestaurantDTO getRestaurantDTO(String restaurantName) {
-        Optional<Restaurant> restaurantOptional = restaurantRepository.findRestaurantByRestaurantName(restaurantName);
+    public RestaurantDTO getRestaurantDTO(UUID idRestaurant) {
+        Optional<Restaurant> restaurantOptional = restaurantRepository.findById(idRestaurant);
         Restaurant restaurant = unwrarpRestaurant(restaurantOptional);
         return convertToRestaurantDTO(restaurant);
     }
@@ -67,10 +68,17 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Restaurant getRestaurantEnity(String restaurantName) {
-        Optional<Restaurant> restaurantOptional = restaurantRepository.findRestaurantByRestaurantName(restaurantName);
+    public Restaurant getRestaurantEnity(UUID idRestaurant) {
+        Optional<Restaurant> restaurantOptional = restaurantRepository.findById(idRestaurant);
         Restaurant restaurant = unwrarpRestaurant(restaurantOptional);
         return  restaurant;
+    }
+
+    @Override
+    public Restaurant getRestaurantEnityByName(String restaurantName) {
+        Optional<Restaurant> restaurantOptional = restaurantRepository.findRestaurantByRestaurantName(restaurantName);
+        Restaurant restaurant = unwrarpRestaurant(restaurantOptional);
+        return restaurant;
     }
 
     static Restaurant unwrarpRestaurant(Optional<Restaurant> entity) {
@@ -118,35 +126,8 @@ public class RestaurantServiceImpl implements RestaurantService {
         if (restaurant.getUserOwner() != null) {
             builder.userOwner(userService.convertToDTO(restaurant.getUserOwner()));
         }
-        if(!restaurant.getOpenTimeList().isEmpty()){
-            builder.openTimeDTOList(convertToOpenTimeDTOList(restaurant.getOpenTimeList()));
-        }
         return builder.build();
     }
 
-    private List<OpenTimeDTO> convertToOpenTimeDTOList(List<OpenTime> openTimeList){
-        List<OpenTimeDTO> openTimeDTOList = new ArrayList<>();
-        for(OpenTime openTime : openTimeList){
-            openTimeDTOList.add(convertToOpenTimeDTO(openTime));
-        }
-        return openTimeDTOList;
-    }
-
-    public OpenTimeDTO convertToOpenTimeDTO(OpenTime openTime) {
-        return OpenTimeDTO.builder()
-                .openingTime(openTime.getOpeningTime())
-                .closingTime(openTime.getClosingTime())
-                .dayOfWeek(openTime.getDayOfWeek())
-                .build();
-    }
-
-    public void addOpenTimeToRestaurant(String restaurantName, List<OpenTime> openTimeList) {
-        Restaurant restaurant = getRestaurantEnity(restaurantName);
-        restaurant.setOpenTimeList(openTimeList);
-        for(OpenTime openTime : openTimeList){
-            openTime.setRestaurant(restaurant);
-        }
-        restaurantRepository.save(restaurant);
-    }
 
 }

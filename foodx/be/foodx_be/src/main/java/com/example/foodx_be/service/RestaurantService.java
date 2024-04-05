@@ -7,12 +7,13 @@ import com.example.foodx_be.enity.Restaurant;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface RestaurantService {
     void addRestaurant(AddRestaurantCommand addRestaurantCommand);
-    RestaurantDTO getRestaurantDTO(String restaurantName);
+    RestaurantDTO getRestaurantDTO(UUID idRestaurant);
     Page<RestaurantDTO> getRestaurantsByKeyword(int page, int limit, String keyword, String searchType);
-    Restaurant getRestaurantEnity(String restaurantName);
-    void addOpenTimeToRestaurant(String restaurantName, List<OpenTime> openTimeList);
+    Restaurant getRestaurantEnity(UUID idRestaurant);
+    Restaurant getRestaurantEnityByName(String restaurantName);
 
 }
