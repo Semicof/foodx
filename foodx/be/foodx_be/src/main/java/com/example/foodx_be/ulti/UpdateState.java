@@ -2,7 +2,7 @@ package com.example.foodx_be.ulti;
 
 public enum UpdateState {
     DAFT,
-    PEDING,
+    PENDING,
     DENINED,
     ACCECPTED
 }

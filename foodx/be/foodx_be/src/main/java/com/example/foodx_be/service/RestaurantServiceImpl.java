@@ -158,6 +158,9 @@ public class RestaurantServiceImpl implements RestaurantService {
         if (restaurant.getUserOwner() != null) {
             builder.userOwner(userService.convertToDTO(restaurant.getUserOwner()));
         }
+        if(restaurant.getUserAdd() != null){
+            builder.userAdd(userService.convertToDTO(restaurant.getUserAdd()));
+        }
         return builder.build();
     }
 

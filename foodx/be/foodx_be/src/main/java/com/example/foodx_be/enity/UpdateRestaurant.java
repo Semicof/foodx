@@ -7,7 +7,6 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -54,7 +53,7 @@ public class UpdateRestaurant {
     @PrePersist
     public void control(){
         if(updateState == null){
-            updateState = UpdateState.PEDING;
+            updateState = UpdateState.PENDING;
         }
         if(updateTime == null){
             updateTime = LocalDateTime.now();

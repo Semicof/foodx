@@ -1,7 +1,6 @@
 package com.example.foodx_be.enity;
 
 import com.example.foodx_be.ulti.RestaurantState;
-import com.example.foodx_be.ulti.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,9 +8,9 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -51,11 +50,11 @@ public class Restaurant {
     private LocalDate timeAdded;
 
     @PrePersist
-    public void control(){
-        if(restaurantState == null){
+    public void control() {
+        if (restaurantState == null) {
             restaurantState = RestaurantState.PENDING;
         }
-        if(timeAdded == null){
+        if (timeAdded == null) {
             timeAdded = LocalDate.now();
         }
     }

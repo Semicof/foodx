@@ -1,9 +1,10 @@
 package com.example.foodx_be.dto;
 
-import com.example.foodx_be.enity.User;
 import com.example.foodx_be.ulti.RestaurantState;
-import com.example.foodx_be.ulti.UpdateSate;
-import lombok.*;
+import com.example.foodx_be.ulti.UpdateState;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,8 +30,12 @@ public class RestaurantDTO {
     private String facebookLink;
     private String instagramLink;
     private RestaurantState restaurantState;
+    @JsonFormat(pattern = "dd:MM:yyyy")
     private LocalDate timeAdded;
     private UserDTO userOwner;
     private UserDTO userAdd;
-    private List<OpenTimeDTO> openTimeDTOList;
+    private UserDTO userUpdate;
+    private UpdateState updateState;
+    @JsonFormat(pattern = "HH:mm:ss dd:MM:yyyy")
+    private LocalDateTime updateTime;
 }
