@@ -2,6 +2,7 @@ package com.example.foodx_be.controller;
 
 import com.example.foodx_be.dto.AddRestaurantCommand;
 import com.example.foodx_be.dto.RestaurantDTO;
+import com.example.foodx_be.dto.UpdateRestaurantCommand;
 import com.example.foodx_be.enity.OpenTime;
 import com.example.foodx_be.service.RestaurantService;
 import lombok.AllArgsConstructor;
@@ -37,5 +38,11 @@ public class RestaurantController {
                                                               @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
                                                               @RequestParam(name = "limit", defaultValue = "10") int limit){
         return new ResponseEntity<>(restaurantService.getRestaurantsByKeyword(pageNo,limit, keyword, searchBy), HttpStatus.OK);
+    }
+    @PostMapping("/{idRestaurant}/update")
+    public ResponseEntity<HttpStatus> updateRestaurant(@PathVariable UUID idRestaurant,
+                                                       @RequestBody UpdateRestaurantCommand updateRestaurantCommand){
+        restaurantService.updateRestaurant(idRestaurant, updateRestaurantCommand);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

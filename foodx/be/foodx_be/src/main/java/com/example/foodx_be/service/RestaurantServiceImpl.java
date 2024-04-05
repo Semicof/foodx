@@ -1,13 +1,14 @@
 package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.AddRestaurantCommand;
-import com.example.foodx_be.dto.OpenTimeDTO;
 import com.example.foodx_be.dto.RestaurantDTO;
-import com.example.foodx_be.enity.OpenTime;
+import com.example.foodx_be.dto.UpdateRestaurantCommand;
 import com.example.foodx_be.enity.Restaurant;
+import com.example.foodx_be.enity.UpdateRestaurant;
 import com.example.foodx_be.enity.User;
 import com.example.foodx_be.exception.NoResultsFoundException;
 import com.example.foodx_be.repository.RestaurantRepository;
+import com.example.foodx_be.repository.UpdateRestaurantRepository;
 import com.example.foodx_be.ulti.RestaurantState;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,8 @@ import java.util.UUID;
 public class RestaurantServiceImpl implements RestaurantService {
     private UserService userService;
     private RestaurantRepository restaurantRepository;
+    private UpdateRestaurantRepository updateRestaurantRepository;
+
     @Override
     public void addRestaurant(AddRestaurantCommand addRestaurantCommand) {
         User user = userService.getUser(addRestaurantCommand.getUserName());
@@ -46,10 +49,10 @@ public class RestaurantServiceImpl implements RestaurantService {
         List<Restaurant> restaurantList = new ArrayList<>();
         switch (searchBy) {
             case "city":
-                restaurantList = restaurantRepository.findAllByCityAndRestaurantState(keyword, RestaurantState.PUBLISH);
+                restaurantList = restaurantRepository.findAllByCityAndRestaurantState(keyword, RestaurantState.ACTIVE);
                 break;
             case "restaurantName":
-                restaurantList = restaurantRepository.findAllByRestaurantNameAndRestaurantState(keyword, RestaurantState.PUBLISH);
+                restaurantList = restaurantRepository.findAllByRestaurantNameAndRestaurantState(keyword, RestaurantState.ACTIVE);
                 break;
         }
         if (restaurantList.isEmpty()) {
@@ -71,7 +74,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     public Restaurant getRestaurantEnity(UUID idRestaurant) {
         Optional<Restaurant> restaurantOptional = restaurantRepository.findById(idRestaurant);
         Restaurant restaurant = unwrarpRestaurant(restaurantOptional);
-        return  restaurant;
+        return restaurant;
     }
 
     @Override
@@ -79,6 +82,16 @@ public class RestaurantServiceImpl implements RestaurantService {
         Optional<Restaurant> restaurantOptional = restaurantRepository.findRestaurantByRestaurantName(restaurantName);
         Restaurant restaurant = unwrarpRestaurant(restaurantOptional);
         return restaurant;
+    }
+
+    @Override
+    public void updateRestaurant(UUID idRestaurant, UpdateRestaurantCommand updateRestaurantCommand) {
+        User userUpdate = userService.getUser(updateRestaurantCommand.getUserName());
+        Restaurant restaurant = getRestaurantEnity(idRestaurant);
+        UpdateRestaurant updateRestaurant = convertToUpdateRestaurant(updateRestaurantCommand);
+        updateRestaurant.setUserUpdate(userUpdate);
+        updateRestaurant.setRestaurant(restaurant);
+        updateRestaurantRepository.save(updateRestaurant);
     }
 
     static Restaurant unwrarpRestaurant(Optional<Restaurant> entity) {
@@ -101,6 +114,25 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .website(addRestaurantCommand.getWebsite())
                 .facebookLink(addRestaurantCommand.getFacebookLink())
                 .instagramLink(addRestaurantCommand.getInstagramLink())
+                .build();
+    }
+
+    private UpdateRestaurant convertToUpdateRestaurant(UpdateRestaurantCommand updateRestaurantCommand) {
+        return UpdateRestaurant.builder()
+                .restaurantName(updateRestaurantCommand.getRestaurantName())
+                .houseNumber(updateRestaurantCommand.getHouseNumber())
+                .ward(updateRestaurantCommand.getWard())
+                .district(updateRestaurantCommand.getDistrict())
+                .city(updateRestaurantCommand.getCity())
+                .longitude(updateRestaurantCommand.getLongitude())
+                .latitude(updateRestaurantCommand.getLatitude())
+                .description(updateRestaurantCommand.getDescription())
+                .phoneNumber(updateRestaurantCommand.getPhoneNumber())
+                .email(updateRestaurantCommand.getEmail())
+                .website(updateRestaurantCommand.getWebsite())
+                .facebookLink(updateRestaurantCommand.getFacebookLink())
+                .instagramLink(updateRestaurantCommand.getInstagramLink())
+                .restaurantState(updateRestaurantCommand.getRestaurantState())
                 .build();
     }
 

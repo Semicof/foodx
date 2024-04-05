@@ -27,4 +27,6 @@ public class OpenTimeController {
     public ResponseEntity<List<OpenTimeDTO>> getOpenTimeOfRestaurant(@PathVariable UUID idRestaurant){
         return new ResponseEntity<>(openTimeService.getOpenTimeOfRestaurant(idRestaurant) ,HttpStatus.OK);
     }
+
+
 }

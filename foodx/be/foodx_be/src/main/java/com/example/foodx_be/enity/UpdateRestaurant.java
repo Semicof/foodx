@@ -1,8 +1,7 @@
 package com.example.foodx_be.enity;
 
 import com.example.foodx_be.ulti.RestaurantState;
-import com.example.foodx_be.ulti.Role;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.example.foodx_be.ulti.UpdateState;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -10,16 +9,16 @@ import org.hibernate.annotations.GenericGenerator;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@Table
-@Entity
 @Builder
-public class Restaurant {
+@Entity
+@Table
+public class UpdateRestaurant {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(
@@ -47,37 +46,26 @@ public class Restaurant {
     private String instagramLink;
     @Column(name = "restaurant_state")
     private RestaurantState restaurantState;
-    @Column(name = "time_added")
-    private LocalDate timeAdded;
+    @Column(name = "time_updated")
+    private LocalDateTime updateTime;
+    @Column(name = "update_state")
+    private UpdateState updateState;
 
     @PrePersist
     public void control(){
-        if(restaurantState == null){
-            restaurantState = RestaurantState.PENDING;
+        if(updateState == null){
+            updateState = UpdateState.PEDING;
         }
-        if(timeAdded == null){
-            timeAdded = LocalDate.now();
+        if(updateTime == null){
+            updateTime = LocalDateTime.now();
         }
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_user_add", referencedColumnName = "id")
-    private User userAdd;
+    @JoinColumn(name = "id_user_update", referencedColumnName = "id")
+    private User userUpdate;
 
     @ManyToOne
-    @JoinColumn(name = "id_user_owner", referencedColumnName = "id")
-    private User userOwner;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
-    private List<Review> reviewList;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
-    private List<OpenTime> openTimeList;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
-    private List<UpdateRestaurant> updateRestaurantList;
-
+    @JoinColumn(name = "id_restaurant", referencedColumnName = "id")
+    private Restaurant restaurant;
 }
