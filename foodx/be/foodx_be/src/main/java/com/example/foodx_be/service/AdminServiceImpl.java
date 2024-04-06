@@ -1,6 +1,7 @@
 package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.RestaurantDTO;
+import com.example.foodx_be.dto.RestaurantUpdateDTO;
 import com.example.foodx_be.dto.ReviewUpdate;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.UpdateRestaurant;
@@ -9,9 +10,14 @@ import com.example.foodx_be.repository.RestaurantRepository;
 import com.example.foodx_be.repository.UpdateRestaurantRepository;
 import com.example.foodx_be.ulti.UpdateState;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,13 +31,21 @@ public class AdminServiceImpl implements AdminService {
     private RestaurantRepository restaurantRepository;
 
     @Override
-    public List<UpdateRestaurant> getRestaurantList(int pageNo, int limit, UpdateState updateState) {
+    public Page<RestaurantUpdateDTO> getRestaurantList(int pageNo, int limit, UpdateState updateState) {
         List<UpdateRestaurant> updateRestaurantList = updateRestaurantRepository.findAllByUpdateState(updateState);
-//        List<RestaurantDTO> restaurantDTOList = new ArrayList<>();
-//        for (UpdateRestaurant updateRestaurant : updateRestaurantList) {
-//            restaurantDTOList.add(convertToRestaurantDTO(updateRestaurant));
-//        }
-        return updateRestaurantList;
+        if (updateRestaurantList.isEmpty()) {
+            throw new NoResultsFoundException();
+        }
+        List<RestaurantUpdateDTO> restaurantUpdateDTOList = new ArrayList<>();
+        for(UpdateRestaurant updateRestaurant : updateRestaurantList){
+            restaurantUpdateDTOList.add(convertToRestaurantUpdateDTO(updateRestaurant));
+        }
+
+        Pageable pageable = PageRequest.of(pageNo, limit);
+        int startIndex = (int) pageable.getOffset();
+        int endIndex = (int) Math.min(pageable.getOffset() + pageable.getPageSize(), restaurantUpdateDTOList.size());
+        List<RestaurantUpdateDTO> subList = restaurantUpdateDTOList.subList(startIndex, endIndex);
+        return new PageImpl<>(subList, pageable, restaurantUpdateDTOList.size());
     }
 
     @Override
@@ -56,9 +70,9 @@ public class AdminServiceImpl implements AdminService {
     }
 
 
-    private RestaurantDTO convertToRestaurantDTO(UpdateRestaurant updateRestaurant) {
-        return RestaurantDTO.builder()
-                .id(updateRestaurant.getId())
+    private RestaurantUpdateDTO convertToRestaurantUpdateDTO(UpdateRestaurant updateRestaurant) {
+       RestaurantUpdateDTO.RestaurantUpdateDTOBuilder builder = RestaurantUpdateDTO.builder()
+                .idUpdate(updateRestaurant.getId())
                 .restaurantName(updateRestaurant.getRestaurantName())
                 .houseNumber(updateRestaurant.getHouseNumber())
                 .ward(updateRestaurant.getWard())
@@ -74,11 +88,15 @@ public class AdminServiceImpl implements AdminService {
                 .instagramLink(updateRestaurant.getInstagramLink())
                 .restaurantState(updateRestaurant.getRestaurantState())
                 .timeAdded(updateRestaurant.getRestaurant().getTimeAdded())
-                .updateTime(updateRestaurant.getUpdateTime())
                 .updateState(updateRestaurant.getUpdateState())
-                .userUpdate(userService.convertToDTO(updateRestaurant.getUserUpdate()))
-                .userAdd(userService.convertToDTO(updateRestaurant.getRestaurant().getUserAdd()))
-                .build();
+                .updateTime(updateRestaurant.getUpdateTime());
+       if(updateRestaurant.getRestaurant().getUserOwner() != null){
+           builder.userNameOwner(updateRestaurant.getRestaurant().getUserOwner().getUsername());
+       }
+       if(updateRestaurant.getUserUpdate() != null){
+           builder.userNameUpdate(updateRestaurant.getUserUpdate().getUsername());
+       }
+       return builder.build();
     }
 
     //DARK SIDE ;))

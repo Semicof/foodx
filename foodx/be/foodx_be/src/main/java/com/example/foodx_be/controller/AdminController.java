@@ -1,6 +1,7 @@
 package com.example.foodx_be.controller;
 
 import com.example.foodx_be.dto.RestaurantDTO;
+import com.example.foodx_be.dto.RestaurantUpdateDTO;
 import com.example.foodx_be.dto.ReviewUpdate;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.UpdateRestaurant;
@@ -10,6 +11,7 @@ import com.example.foodx_be.service.RestaurantService;
 import com.example.foodx_be.service.UserService;
 import com.example.foodx_be.ulti.UpdateState;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,9 +34,9 @@ public class AdminController {
     }
 
     @GetMapping("/reviewUpdate")
-    public ResponseEntity<List<UpdateRestaurant>> getUpdateRestaurantList(@RequestParam(name = "updateState") UpdateState updateState,
-                                                                          @RequestParam(name = "pageNo") int pageNo,
-                                                                          @RequestParam(name = "limit") int limit){
+    public ResponseEntity<Page<RestaurantUpdateDTO>> getUpdateRestaurantList(@RequestParam(name = "updateState") UpdateState updateState,
+                                                                             @RequestParam(name = "pageNo") int pageNo,
+                                                                             @RequestParam(name = "limit") int limit){
         return new ResponseEntity<>(adminService.getRestaurantList(pageNo, limit, updateState), HttpStatus.OK);
     }
 

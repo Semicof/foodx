@@ -31,10 +31,9 @@ public class RestaurantUpdateDTO {
     private RestaurantState restaurantState;
     @JsonFormat(pattern = "dd:MM:yyyy")
     private LocalDate timeAdded;
-    private UserDTO userOwner;
-    private UserDTO userUpdate;
+    private String userNameOwner;
+    private String userNameUpdate;
     private UpdateState updateState;
     @JsonFormat(pattern = "HH:mm:ss dd:MM:yyyy")
     private LocalDateTime updateTime;
-    private RestaurantDTO restaurantDTO;
 }
