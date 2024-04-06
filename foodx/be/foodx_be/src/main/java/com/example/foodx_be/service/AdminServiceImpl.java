@@ -1,6 +1,5 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.RestaurantDTO;
 import com.example.foodx_be.dto.RestaurantUpdateDTO;
 import com.example.foodx_be.dto.ReviewUpdate;
 import com.example.foodx_be.enity.Restaurant;
@@ -37,7 +36,7 @@ public class AdminServiceImpl implements AdminService {
             throw new NoResultsFoundException();
         }
         List<RestaurantUpdateDTO> restaurantUpdateDTOList = new ArrayList<>();
-        for(UpdateRestaurant updateRestaurant : updateRestaurantList){
+        for (UpdateRestaurant updateRestaurant : updateRestaurantList) {
             restaurantUpdateDTOList.add(convertToRestaurantUpdateDTO(updateRestaurant));
         }
 
@@ -57,6 +56,7 @@ public class AdminServiceImpl implements AdminService {
                 updateFromRestaurantUpdate(updateRestaurant, restaurant);
                 restaurantRepository.save(restaurant);
             } catch (Exception e) {
+                throw  new NoResultsFoundException();
             }
         }
         updateRestaurant.setUpdateState(reviewUpdate.getUpdateState());
@@ -71,7 +71,7 @@ public class AdminServiceImpl implements AdminService {
 
 
     private RestaurantUpdateDTO convertToRestaurantUpdateDTO(UpdateRestaurant updateRestaurant) {
-       RestaurantUpdateDTO.RestaurantUpdateDTOBuilder builder = RestaurantUpdateDTO.builder()
+        RestaurantUpdateDTO.RestaurantUpdateDTOBuilder builder = RestaurantUpdateDTO.builder()
                 .idUpdate(updateRestaurant.getId())
                 .restaurantName(updateRestaurant.getRestaurantName())
                 .houseNumber(updateRestaurant.getHouseNumber())
@@ -90,13 +90,13 @@ public class AdminServiceImpl implements AdminService {
                 .timeAdded(updateRestaurant.getRestaurant().getTimeAdded())
                 .updateState(updateRestaurant.getUpdateState())
                 .updateTime(updateRestaurant.getUpdateTime());
-       if(updateRestaurant.getRestaurant().getUserOwner() != null){
-           builder.userNameOwner(updateRestaurant.getRestaurant().getUserOwner().getUsername());
-       }
-       if(updateRestaurant.getUserUpdate() != null){
-           builder.userNameUpdate(updateRestaurant.getUserUpdate().getUsername());
-       }
-       return builder.build();
+        if (updateRestaurant.getRestaurant().getUserOwner() != null) {
+            builder.userNameOwner(updateRestaurant.getRestaurant().getUserOwner().getUsername());
+        }
+        if (updateRestaurant.getUserUpdate() != null) {
+            builder.userNameUpdate(updateRestaurant.getUserUpdate().getUsername());
+        }
+        return builder.build();
     }
 
     //DARK SIDE ;))
