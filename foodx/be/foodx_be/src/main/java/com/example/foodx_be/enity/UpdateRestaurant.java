@@ -2,6 +2,7 @@ package com.example.foodx_be.enity;
 
 import com.example.foodx_be.ulti.RestaurantState;
 import com.example.foodx_be.ulti.UpdateState;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -43,12 +44,17 @@ public class UpdateRestaurant {
     private String facebookLink;
     @Column(name = "instagram_link")
     private String instagramLink;
+    @Enumerated(EnumType.STRING)
     @Column(name = "restaurant_state")
     private RestaurantState restaurantState;
     @Column(name = "time_updated")
     private LocalDateTime updateTime;
     @Column(name = "update_state")
+    @Enumerated(EnumType.STRING)
     private UpdateState updateState;
+    @Column(name = "review_update_time")
+    @JsonFormat(pattern = "HH:mm dd:MM:yyyy")
+    private LocalDateTime reviewUpdateTime;
 
     @PrePersist
     public void control(){

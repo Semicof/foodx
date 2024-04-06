@@ -2,6 +2,7 @@ package com.example.foodx_be.enity;
 
 import com.example.foodx_be.ulti.RestaurantState;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -49,6 +50,15 @@ public class Restaurant {
     @Column(name = "time_added")
     private LocalDate timeAdded;
 
+
+    @ManyToOne
+    @JoinColumn(name = "id_user_add", referencedColumnName = "id")
+    private User userAdd;
+
+    @ManyToOne
+    @JoinColumn(name = "id_user_owner", referencedColumnName = "id")
+    private User userOwner;
+
     @PrePersist
     public void control() {
         if (restaurantState == null) {
@@ -59,13 +69,6 @@ public class Restaurant {
         }
     }
 
-    @ManyToOne
-    @JoinColumn(name = "id_user_add", referencedColumnName = "id")
-    private User userAdd;
-
-    @ManyToOne
-    @JoinColumn(name = "id_user_owner", referencedColumnName = "id")
-    private User userOwner;
 
     @JsonIgnore
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)

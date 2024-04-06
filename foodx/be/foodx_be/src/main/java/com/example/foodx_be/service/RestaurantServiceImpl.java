@@ -46,15 +46,12 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Page<RestaurantDTO> getRestaurantsByKeyword(int pageNo, int limit, String keyword, String searchBy) {
-        List<Restaurant> restaurantList = new ArrayList<>();
-        switch (searchBy) {
-            case "city":
-                restaurantList = restaurantRepository.findAllByCityAndRestaurantState(keyword, RestaurantState.ACTIVE);
-                break;
-            case "restaurantName":
-                restaurantList = restaurantRepository.findAllByRestaurantNameAndRestaurantState(keyword, RestaurantState.ACTIVE);
-                break;
-        }
+        List<Restaurant> restaurantList = switch (searchBy) {
+            case "city" -> restaurantRepository.findAllByCityAndRestaurantState(keyword, RestaurantState.ACTIVE);
+            case "restaurantName" ->
+                    restaurantRepository.findAllByRestaurantNameAndRestaurantState(keyword, RestaurantState.ACTIVE);
+            default -> new ArrayList<>();
+        };
         if (restaurantList.isEmpty()) {
             throw new NoResultsFoundException();
         }
@@ -73,15 +70,13 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public Restaurant getRestaurantEnity(UUID idRestaurant) {
         Optional<Restaurant> restaurantOptional = restaurantRepository.findById(idRestaurant);
-        Restaurant restaurant = unwrarpRestaurant(restaurantOptional);
-        return restaurant;
+        return unwrarpRestaurant(restaurantOptional);
     }
 
     @Override
     public Restaurant getRestaurantEnityByName(String restaurantName) {
         Optional<Restaurant> restaurantOptional = restaurantRepository.findRestaurantByRestaurantName(restaurantName);
-        Restaurant restaurant = unwrarpRestaurant(restaurantOptional);
-        return restaurant;
+        return unwrarpRestaurant(restaurantOptional);
     }
 
     @Override
