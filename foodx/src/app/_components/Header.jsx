@@ -27,13 +27,13 @@ function Header() {
     },
   ];
   return (
-    <div className="flex justify-between p-4 shadow-sm items-center">
+    <div className="flex justify-between py-4 px-20 shadow-sm items-center">
       <div className="flex items-center gap-10">
         <Image src="/logo/logo.svg" width={80} height={100} />
         <ul className="md:flex gap-9 hidden">
           {menu.map((item, index) => (
-            <Link href={item.path}>
-            <li key={index} className="hover:text-primary hover:scale-110 cursor-pointer transition-all ease-in-out font-bold text-lg">{item.name}</li>
+            <Link href={item.path} key={index}>
+            <li className="hover:text-primary hover:scale-110 cursor-pointer transition-all ease-in-out font-bold text-lg">{item.name}</li>
             </Link>
           ))}
         </ul>
