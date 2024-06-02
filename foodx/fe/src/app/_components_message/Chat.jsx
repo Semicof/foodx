@@ -1,5 +1,5 @@
 import React from "react";
-import { user_test } from "@/testData";
+import { user_test,message_test } from "@/testData";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,10 +16,10 @@ function Chat() {
         <div>...</div>
       </div>
       <div className="flex flex-col h-[90%]">
-        <div className="h-[80%]">
-          <Message/> 
+        <div className="h-[85%]">
+          <Message msg={message_test}/> 
         </div>
-        <div className="h-[20%] border-t-[2px] p-4 flex items-center gap-4">
+        <div className="h-[15%] border-t-[2px] p-4 flex items-center gap-4">
           <Input
             type="text"
             placeholder="Enter your message..."
