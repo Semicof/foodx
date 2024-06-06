@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import NavLink from "../_utils/NavLink";
+import { useAppContext } from "@/context/AppProvider";
+import UserDropdown from "./UserDropdown";
 const menu = [
   {
     id: 1,
@@ -17,17 +19,19 @@ const menu = [
   {
     id: 3,
     name: "Leader Board",
-    path: "/leader_board",
+    path: "/leader-board",
   },
   {
     id: 4,
-    name: "Contact us",
-    path: "/contact",
+    name: "Community",
+    path: "/community",
   },
 ];
 
 function Header() {
-  const session = true;
+  // const token  = localStorage.getItem('token');
+  const {user} = useAppContext();
+
   return (
     <div className="flex justify-between py-4 px-20 shadow-sm items-center">
       <div className="flex items-center gap-10">
@@ -41,28 +45,13 @@ function Header() {
           ))}
         </ul>
       </div>
-      <div className="flex gap-6 cursor-pointer">
-        {session ? (
+      <div className="flex gap-10 items-center cursor-pointer">
+        {user ? (
           <>
             <Link href="/add-listing">
               <Button>Add Listing</Button>
             </Link>
-            <Link className="user" href="/user">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-9 h-9 font-bold hover:text-primary"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                />
-              </svg>
-            </Link>
+            <UserDropdown/>
             <Link className="message" href="/message">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -79,7 +68,7 @@ function Header() {
                 />
               </svg>
             </Link>
-            <Link className="notification" href="/notification">
+            <Link className="notification" href="/notifications">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"

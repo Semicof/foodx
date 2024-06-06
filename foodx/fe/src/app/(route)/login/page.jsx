@@ -1,22 +1,91 @@
+"use client";
+import { login } from "@/app/_utils/GlobalAPI";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 function page() {
+  const router = useRouter();
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
+  };
+
+  const validateForm = () => {
+    const { username, password } = formData;
+
+    if (!username || !password) {
+      return "All fields must be filled.";
+    }
+    if (password.length < 6) {
+      return "Password must be at least 6 characters long.";
+    }
+    return null;
+  };
+
+  const formAction = async () => {
+    setError("");
+    setSuccess("");
+
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    try {
+      const resp = await login(formData);
+      if (resp.status === 200) {
+        localStorage.setItem('token',resp.data.result.token);
+        setSuccess("Login successfully, redirecting to homepage...");
+        setTimeout(() => {
+          router.push("/");
+        }, 2000);
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 405) {
+        setError("Invalid information.");
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
+    }
+  };
+
   return (
     <section className="relative flex flex-wrap lg:h-screen lg:items-center">
       <div className="w-full px-4 py-12 sm:px-6 sm:py-16 lg:w-1/2 lg:px-8 lg:py-24">
         <div className="mx-auto max-w-lg text-center">
-          <h1 className="text-2xl font-bold sm:text-3xl">Join the <span className="text-primary font-bold">FoodX</span> community!</h1>
+          <h1 className="text-2xl font-bold sm:text-3xl">
+            Join the <span className="text-primary font-bold">FoodX</span>{" "}
+            community!
+          </h1>
 
           <p className="mt-4 text-gray-500">
-          Whether you're a seasoned food critic or just love a good meal, our app connects you with great eateries and authentic reviews. Log in now to start your gastronomic journey!
+            Whether you're a seasoned food critic or just love a good meal, our
+            app connects you with great eateries and authentic reviews. Log in
+            now to start your gastronomic journey!
           </p>
         </div>
 
-        <form action="#" className="mx-auto mb-0 mt-8 max-w-md space-y-4">
+        <form
+          action={formAction}
+          className="mx-auto mb-0 mt-8 max-w-md space-y-4"
+        >
           <div>
             <Label htmlFor="email" className="sr-only">
               Email
@@ -25,9 +94,11 @@ function page() {
             <div className="relative">
               <Input
                 name="username"
-                type="email"
+                value={formData.username}
+                onChange={handleChange}
+                type="text"
                 className="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-sm"
-                placeholder="Enter email"
+                placeholder="Enter your username"
               />
 
               <span className="absolute inset-y-0 end-0 grid place-content-center px-4">
@@ -56,6 +127,8 @@ function page() {
 
             <div className="relative">
               <Input
+                value={formData.password}
+                onChange={handleChange}
                 name="password"
                 type="password"
                 className="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-sm"
@@ -90,15 +163,15 @@ function page() {
           <div className="flex items-center justify-between">
             <p className="text-sm text-gray-500">
               No account?
-              <Link href={"/signup"} className="underline text-primary ml-1">Sign up</Link>
+              <Link href={"/signup"} className="underline text-primary ml-1">
+                Sign up
+              </Link>
             </p>
 
-            <Button
-              type="submit"
-            >
-              Log in
-            </Button>
+            <Button type="submit">Log in</Button>
           </div>
+          {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
+          {success && <p className="mt-4 text-sm text-green-500">{success}</p>}
         </form>
       </div>
 

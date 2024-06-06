@@ -1,13 +1,80 @@
 "use client";
-import Selector from "@/app/_helpers/Selector";
+import { register } from "@/app/_utils/GlobalAPI";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Autocomplete } from "@mui/material";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 function page() {
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    repeatPassword: "",
+    name: "",
+    phoneNumber: "",
+    email: "",
+    ward: "",
+    district: "",
+    city: ""
+  });
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === 'checkbox' ? checked : value,
+    });
+  };
+
+  const validateForm = () => {
+    const { username, password, repeatPassword, name, phoneNumber, email, ward, district, city } = formData;
+
+    if (!username || !password || !repeatPassword || !name || !phoneNumber || !email || !ward || !district || !city) {
+      return "All fields must be filled.";
+    }
+    if (password.length < 6) {
+      return "Password must be at least 6 characters long.";
+    }
+    if (password !== repeatPassword) {
+      return "Passwords do not match.";
+    }
+    return null;
+  };
+
+  const formAction = async () => {
+    setError("");
+    setSuccess("");
+
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    try {
+      const resp = await register(formData);
+      if (resp.status === 200) {
+        setSuccess("Account created successfully! Redirecting to login...");
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        setError("Account already exists.");
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
+    }
+  };
+
   return (
     <section className="bg-white">
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
@@ -31,10 +98,10 @@ function page() {
               adventures and share your own dining experiences.
             </p>
 
-            <form action="#" className="mt-8 grid grid-cols-6 gap-6">
+            <form action={formAction} className="mt-8 grid grid-cols-6 gap-6">
               <div className="col-span-6 sm:col-span-6">
                 <Label
-                  htmlFor="FirstName"
+                  htmlFor="username"
                   className="block text-sm font-medium text-gray-700"
                 >
                   Username
@@ -42,59 +109,140 @@ function page() {
 
                 <Input
                   type="text"
-                  id="FirstName"
-                  name="first_name"
+                  id="username"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
                   className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
                 />
               </div>
 
               <div className="col-span-6 sm:col-span-6">
                 <Label
-                  htmlFor="Country"
+                  htmlFor="name"
                   className="block text-sm font-medium text-gray-700"
                 >
-                 Address
+                  Full name
                 </Label>
-                <Input placeholder="Format: Ward, District, City"/>
+
+                <Input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                />
+              </div>
+
+              <div className="col-span-6 sm:col-span-2">
+                <Label
+                  htmlFor="ward"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Ward
+                </Label>
+                <Input
+                  type="text"
+                  name="ward"
+                  id="ward"
+                  value={formData.ward}
+                  onChange={handleChange}
+                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                />
+              </div>
+
+              <div className="col-span-6 sm:col-span-2">
+                <Label
+                  htmlFor="district"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  District
+                </Label>
+                <Input
+                  type="text"
+                  name="district"
+                  id="district"
+                  value={formData.district}
+                  onChange={handleChange}
+                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                />
+              </div>
+
+              <div className="col-span-6 sm:col-span-2">
+                <Label
+                  htmlFor="city"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  City
+                </Label>
+                <Input
+                  type="text"
+                  name="city"
+                  id="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                />
               </div>
 
               <div className="col-span-6">
                 <Label
-                  htmlFor="Email"
+                  htmlFor="email"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  {" "}
-                  Email{" "}
+                  Email
                 </Label>
 
                 <Input
                   type="email"
-                  id="Email"
+                  id="email"
                   name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                />
+              </div>
+
+              <div className="col-span-6">
+                <Label
+                  htmlFor="phoneNumber"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Phone number
+                </Label>
+
+                <Input
+                  type="text"
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
                   className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
                 />
               </div>
 
               <div className="col-span-6 sm:col-span-3">
                 <Label
-                  htmlFor="Password"
+                  htmlFor="password"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  {" "}
-                  Password{" "}
+                  Password
                 </Label>
 
                 <Input
                   type="password"
-                  id="Password"
+                  id="password"
                   name="password"
+                  value={formData.password}
+                  onChange={handleChange}
                   className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
                 />
               </div>
 
               <div className="col-span-6 sm:col-span-3">
                 <Label
-                  htmlFor="PasswordConfirmation"
+                  htmlFor="repeatPassword"
                   className="block text-sm font-medium text-gray-700"
                 >
                   Password Confirmation
@@ -102,17 +250,19 @@ function page() {
 
                 <Input
                   type="password"
-                  id="PasswordConfirmation"
-                  name="password_confirmation"
+                  id="repeatPassword"
+                  name="repeatPassword"
+                  value={formData.repeatPassword}
+                  onChange={handleChange}
                   className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
                 />
               </div>
 
               <div className="col-span-6">
-                <Label htmlFor="MarketingAccept" className="flex gap-4">
+                <Label htmlFor="marketing_accept" className="flex gap-4">
                   <Input
                     type="checkbox"
-                    id="MarketingAccept"
+                    id="marketing_accept"
                     name="marketing_accept"
                     className="size-5 rounded-md border-gray-200 bg-white shadow-sm"
                   />
@@ -140,7 +290,7 @@ function page() {
               </div>
 
               <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
-                <Button>Create an account</Button>
+                <Button type="submit">Create an account</Button>
 
                 <p className="mt-4 text-sm text-gray-500 sm:mt-0">
                   Already have an account?
@@ -154,6 +304,8 @@ function page() {
                 </p>
               </div>
             </form>
+            {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
+            {success && <p className="mt-4 text-sm text-green-500">{success}</p>}
           </div>
         </main>
       </div>

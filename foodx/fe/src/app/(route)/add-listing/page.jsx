@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import OpeningHourSelect from "@/app/_component_addlisting/OpeningHourSelect";
 import ImageUpload from "@/app/_upload/ImageUpload";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 function page() {
   const defaultOpeningHours = {
@@ -90,10 +91,10 @@ function page() {
       images,
       options: { isDelivery, isTakeAway, isOutDoorSeating },
     };
-    console.log(formData);
   };
 
   return (
+    <ProtectedRoute>
     <div className="w-full flex items-center justify-center">
       <div className="p-8 rounded-lg shadow-md w-[70%] m-6 h-[70%] overflow-y-scroll">
         <h1 className="text-primary text-3xl font-bold text-center my-1">
@@ -245,6 +246,7 @@ function page() {
         </form>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }
 
