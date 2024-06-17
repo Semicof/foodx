@@ -6,55 +6,70 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import React, { useEffect, useState } from "react";
-
-const userInfo = {
-  id: "1",
-  name: "Asley",
-  avatar_link:
-    "https://res.cloudinary.com/ddinttgy0/image/upload/v1712909047/ivvn3honq3owtlvxsib3.png",
-  ward: "Doi Can",
-  district: "Ba Dinh",
-  city: "Ha Noi",
-  join_date: "2002-10-3",
-  points: "30",
-  number_of_reviews: "10",
-};
+import { useRouter } from "next/navigation";
+import { postReview } from "@/app/_utils/GlobalAPI";
+import { useAppContext } from "@/context/AppProvider";
 
 function Page({ params }) {
+  const router = useRouter();
+  const { token } = useAppContext();
   const [restaurantId, setRestaurantId] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [rate, setRate] = useState(0);
-  const [time, setTime] = useState("");
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState(null);
+
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    setImages(selectedFile);
+  };
 
   useEffect(() => {
     setRestaurantId(params.id);
-  }, []);
+  }, [params.id]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const currentTime = new Date().toISOString();
-    setTime(currentTime);
 
-    const reviewData = {
-      userId: userInfo.id,
-      restaurantId,
-      title,
-      content,
-      rate,
-      time: currentTime,
-      images,
+    const formData = new FormData();
+    const data = {
+      restaurantId: restaurantId,
+      reviewTitle: title,
+      reviewContent: content,
+      starNumber: rate,
     };
 
+    formData.append("data", JSON.stringify(data));
+    // images.forEach((image) => {
+    //   console.log(image);
+    //   formData.append("multipartFiles", image);
+    // });
+    if (images) {
+      formData.append("multipartFiles", images);
+    }
+
+    console.log("form data:", formData.get("data"));
+    // console.log("form multipart files:", formData.get("multipartFiles"));
+
+    try {
+      const resp = await postReview(formData, token);
+      if (resp.ok) {
+        router.push("/view-restaurant/" + params.id);
+      } else {
+        throw new Error("Failed to post review");
+      }
+    } catch (error) {
+      console.error("Failed to post review: ", error);
+    }
   };
 
   return (
     <ProtectedRoute>
-      <div className="w-full h-screen flex justify-center">
+      <div className="w-full mb-8 flex justify-center">
         <form
           onSubmit={handleSubmit}
           className="w-[60%] h-[88%] border rounded-lg p-4 flex flex-col gap-4 mt-5"
+         
         >
           <h1 className="text-3xl font-bold text-center text-primary">
             Write your review
@@ -71,7 +86,7 @@ function Page({ params }) {
               placeholder="Write it down here..."
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className=" min-h-40"
+              className="min-h-40"
             />
           </div>
 
@@ -82,7 +97,12 @@ function Page({ params }) {
 
           <div>
             <h2>Add images</h2>
-            <ImageUpload setImages={setImages} />
+            {/* <ImageUpload setImages={setImages} /> */}
+            <Input
+              type="file"
+              onChange={handleFileChange}
+              accept="image/png, image/jpeg, image/jpg, image/gif"
+            />
           </div>
 
           <div className="flex items-center justify-center">

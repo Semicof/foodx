@@ -30,9 +30,9 @@ const Map = ({ center,restaurant,width,height }) => {
 
     return `
       <div className="">
-        <img src="${restaurant.image}" alt="${restaurant.restaurant_name}" style="width:100%;height:auto;"/>
-        <h3 class=" font-bold text-xl mt-1">${restaurant.restaurant_name}</h3>
-        <span class="m-0 text-yellow-500">${generateStars(restaurant.rate)}</span>
+        <img src="${restaurant.restaurantImageResponseList[0].imageUrl}" alt="${restaurant.restaurantName}" style="width:100%;height:auto;"/>
+        <h3 class=" font-bold text-xl mt-1">${restaurant.restaurantName}</h3>
+        <span class="m-0 text-yellow-500">${generateStars(restaurant.points)}</span>
       </div>
     `;
   };

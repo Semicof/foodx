@@ -51,7 +51,7 @@ function ListUser() {
         {user_test.map((item, index) => (
           <div key={index} className="flex items-center p-4 gap-2">
             <Image
-              src={item.avatar_link}
+              src={item.avatarLink}
               width={50}
               height={50}
               className="rounded-full mx-2 border-[2px] border-green-400"

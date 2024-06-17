@@ -29,8 +29,7 @@ const menu = [
 ];
 
 function Header() {
-  // const token  = localStorage.getItem('token');
-  const {user} = useAppContext();
+  const {token} = useAppContext();
 
   return (
     <div className="flex justify-between py-4 px-20 shadow-sm items-center">
@@ -46,7 +45,7 @@ function Header() {
         </ul>
       </div>
       <div className="flex gap-10 items-center cursor-pointer">
-        {user ? (
+        {token ? (
           <>
             <Link href="/add-listing">
               <Button>Add Listing</Button>

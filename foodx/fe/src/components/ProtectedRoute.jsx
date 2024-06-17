@@ -1,19 +1,17 @@
-import { useAppContext } from '@/context/AppProvider';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-
+import { useAppContext } from "@/context/AppProvider";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useAppContext();
   const router = useRouter();
-
+  const { token } = useAppContext();
   useEffect(() => {
-    if (!user) {
-      router.push('/login'); 
+    if (!token) {
+      router.push("/login");
     }
-  }, [user, router]);
+  }, [token, router]);
 
-  return user ? children : null;
+  return token ? children : null;
 };
 
 export default ProtectedRoute;

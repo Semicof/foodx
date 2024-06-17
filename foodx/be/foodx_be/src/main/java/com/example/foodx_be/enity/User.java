@@ -41,7 +41,7 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @Column(name = "avatar_link")
+    @Column(name = "avatarLink")
     private String avatarLink;
 
     @Column(name = "facebook_link")

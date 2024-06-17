@@ -8,7 +8,7 @@ function ImageUpload({setImages}) {
   const [imagesPreview,setImagesPreview] = useState([]);
 
   const handleFileUpload = (event)=>{
-    const files = event.target.files;
+    const files = Array.from(event.target.files);
     setImages(files);
     const previews = Array.from(files).map((file)=>URL.createObjectURL(file));
     setImagesPreview(previews);

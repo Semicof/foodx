@@ -226,19 +226,19 @@ const user_test = [
   {
     id: "1",
     name: "Asley",
-    avatar_link:
+    avatarLink:
       "https://res.cloudinary.com/ddinttgy0/image/upload/v1712909047/ivvn3honq3owtlvxsib3.png",
     ward: "Doi Can",
     district: "Ba Dinh",
     city: "Ha Noi",
-    join_date: "2002-10-3",
+    joinDate: "2002-10-3",
     points: "30",
     number_of_reviews: "10",
   },
   {
     id: "2",
     name: "Greyman",
-    avatar_link:
+    avatarLink:
       "https://res.cloudinary.com/ddinttgy0/image/upload/v1712909047/ivvn3honq3owtlvxsib3.png",
     ward: "Doi Can",
     district: "Ba Dinh",
@@ -250,7 +250,7 @@ const user_test = [
   {
     id: "3",
     name: "Donald Trump",
-    avatar_link:
+    avatarLink:
       "https://res.cloudinary.com/ddinttgy0/image/upload/v1712909047/ivvn3honq3owtlvxsib3.png",
     ward: "Doi Can",
     district: "Ba Dinh",
@@ -262,7 +262,7 @@ const user_test = [
   {
     id: "4",
     name: "Vuong Nguyen",
-    avatar_link:
+    avatarLink:
       "https://res.cloudinary.com/ddinttgy0/image/upload/v1712909047/ivvn3honq3owtlvxsib3.png",
     ward: "Doi Can",
     district: "Ba Dinh",
@@ -274,7 +274,7 @@ const user_test = [
   {
     id: "5",
     name: "Nguyen Van B",
-    avatar_link:
+    avatarLink:
       "https://res.cloudinary.com/ddinttgy0/image/upload/v1712909047/ivvn3honq3owtlvxsib3.png",
     ward: "Doi Can",
     district: "Ba Dinh",

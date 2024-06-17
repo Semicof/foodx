@@ -1,50 +1,43 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { getMyInfo, refreshToken } from '@/app/_utils/GlobalAPI';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { refreshToken } from "@/app/_utils/GlobalAPI";
 
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [token, setToken] = useState("");
   const [location, setLocation] = useState({ lat: "", lng: "" });
   const router = useRouter();
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const response = await getMyInfo(token);
-          setUser(response.data.result);
-          startTokenRefresh();
-        } catch (error) {
-          console.error('Error fetching user data', error);
-          if (error.response && error.response.status === 401) {
-            localStorage.removeItem('token');
-            router.push('/login');
-          }
-        }
-      }
-    };
+    const tokenFromStorage = localStorage.getItem("token");
+    if (tokenFromStorage) {
+      setToken(tokenFromStorage);
+    }
 
     const startTokenRefresh = () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        const interval = setInterval(async () => {
+      const interval = setInterval(async () => {
+        if (token) {
           try {
             const newToken = await refreshToken(token);
-            localStorage.setItem('token', newToken);
+            localStorage.setItem("token", newToken);
+            setToken(newToken);
           } catch (error) {
-            console.error('Error refreshing token', error);
+            console.error("Error refreshing token", error);
             if (error.response && error.response.status === 401) {
-              localStorage.removeItem('token');
+              localStorage.removeItem("token");
+              setToken("");
               clearInterval(interval);
-              router.push('/login');
+              router.push("/login");
             }
           }
-        }, 30 * 60 * 1000);
-      }
+        }
+      }, 30 * 60 * 1000);
+
+      return () => clearInterval(interval); // Cleanup interval on unmount
     };
+
+    startTokenRefresh();
 
     const fetchLocation = () => {
       if (navigator.geolocation) {
@@ -54,20 +47,19 @@ export const AppProvider = ({ children }) => {
             setLocation({ lat: latitude, lng: longitude });
           },
           (error) => {
-            console.error('Error fetching location', error);
+            console.error("Error fetching location", error);
           }
         );
       } else {
-        console.error('Geolocation is not supported by this browser');
+        console.error("Geolocation is not supported by this browser");
       }
     };
 
-    fetchUserData();
     fetchLocation();
-  }, [router]);
+  }, [token, router]);
 
   return (
-    <AppContext.Provider value={{ user, location }}>
+    <AppContext.Provider value={{ token, location }}>
       {children}
     </AppContext.Provider>
   );

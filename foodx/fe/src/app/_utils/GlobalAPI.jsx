@@ -86,12 +86,8 @@ const getMyInfo = (token) => {
   });
 };
 
-const getProfile = (userId, token) => {
-  return axiosClient.get("/users/" + userId, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+const getProfile = (userId) => {
+  return axiosClient.get("/users/" + userId);
 };
 
 const updateProfile = (id, data, token) => {
@@ -102,32 +98,36 @@ const updateProfile = (id, data, token) => {
   });
 };
 
-const searchUsers = (name, token) => {
-  return axiosClient.get("/users/search", {
-    params: { name: name },
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-};
+const searchUsers = (data)=>{
+  return axiosClient.get("users/specification",data);
+}
 
 //restaurant
 
 const getNearbyRestaurant = (data) => {
-  return axiosClient.post("/restaurants/nearby", data);
+  return axiosClient.post("/restaurants/nearby",data);
 };
+
+const getRestaurants = (data)=>{
+  return axiosClient.post("/restaurants/specification",data);
+}
+
+const getRestaurantById = (id)=>{
+  return axiosClient.get("/restaurants/"+id);
+}
 
 //review
 
-const getPostReview = (data,token)=>{
+const postReview = (data,token)=>{
   return axiosClient.post("/reviews",data,{
     headers: {
       Authorization: `Bearer ${token}`,
+      
     },
   })
 }
 
-const getReviewById = (data,token)=>{
+const getReviewById = (data)=>{
   //datatype
   // {
   //   "searchRequestDTO": [
@@ -145,11 +145,7 @@ const getReviewById = (data,token)=>{
   //   "sortByColumn": "string"
   // }
 
-  return axiosClient.get("/reviews/specification",data,{
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
+  return axiosClient.post("/reviews/specification",data)
 }
 
 const getRecentReviews = ()=>{
@@ -157,6 +153,12 @@ const getRecentReviews = ()=>{
 }
 
 
+//utilities
+
+
+const getOpeningTime = (restaurantId)=>{
+  return axiosClient.get("/opentimes/"+restaurantId);
+}
 
 
 module.exports = {
@@ -169,7 +171,10 @@ module.exports = {
   searchUsers,
   updateProfile,
   getNearbyRestaurant,
-  getPostReview,
+  getRestaurants,
+  getRestaurantById,
+  postReview,
   getReviewById,
-  getRecentReviews
+  getRecentReviews,
+  getOpeningTime,
 };

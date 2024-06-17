@@ -9,7 +9,7 @@ function Chat() {
   return (
     <div className="h-full border-l-[2px]">
       <div className="flex justify-between items-center p-6 h-[10%] border-b-[2px]">
-        <Image src={user_test[0].avatar_link} width={50} height={50} />
+        <Image src={user_test[0].avatarLink} width={50} height={50} />
         <div className="font-bold text-2xl text-primary">
           {user_test[0].name}
         </div>
